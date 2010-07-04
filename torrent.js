@@ -8,7 +8,8 @@ var Peer = require('./peer').Peer;
 var bencode = require('./includes/bencode');
 
 function Torrent(torrentFile) {
-	this.torrentFile=torrentFile
+	this.torrentFile=torrentFile;
+	this.files=[];
 	this.init();
 }
 
@@ -24,8 +25,6 @@ Torrent.prototype = {
 			this.metaInfo=bencode.decode(this.metaInfoRaw);
 			sys.log('Read Torrent File '+this.torrentFile+' - '+this.metaInfo.comment);
 		}
-		
-		this.files=[];
 		
 		/* Get a list of filenames */
 		if(typeof this.metaInfo.info.files != 'undefined') { // Multi-file torrets
