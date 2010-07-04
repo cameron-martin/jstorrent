@@ -8,9 +8,14 @@ var Peer = require('./peer').Peer;
 var bencode = require('./includes/bencode');
 
 function Torrent(torrentFile) {
-	this.torrentFile=torrentFile;
-	this.files=[];
+	this.torrentFile=torrentFile; // The path to the torrent file
+	this.files=[]; // An array of objects with information about each file in the torrent in:
+					/* [ {name:TORRENT_BASENAME, path: RELATIVE_PATH_TO_TORRENT, offset: BYTE_OFFSET_OF_FILE, length: SIZE_OF_FILE} ] */
+	this.metaInfo={}; // The bencode-decoded information from the 
+	this.metaInfoRaw=null; // The raw bencoded information
+	
 	this.init();
+	
 }
 
 Torrent.prototype = {
@@ -37,7 +42,6 @@ Torrent.prototype = {
 					path:path.join.apply(null, file.path),
 					offset: offsetCounter,
 					length: file.length,
-					end: offsetCounter+file.length,
 				});
 				offsetCounter+=file.length;
 			}
@@ -48,9 +52,10 @@ Torrent.prototype = {
 				path:this.metaInfo.info.name,
 				offset: 0,
 				length: this.metaInfo.info.length,
-				end: this.metaInfo.info.length,
 			});
 		}
+		
+		/* Output the list of filenames */
 		sys.log(JSON.stringify(this.files));
 	},
 	
